@@ -1,8 +1,10 @@
 package com.ta.artem.controllers;
 
+import com.ta.artem.utils.JwtTokenUtil;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,9 +21,15 @@ import java.util.Map;
 @RequestMapping
 public class AuthController {
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody LoginRequest loginRequest) {
-        System.out.println("Login attempt for username: " + loginRequest.getUsername()); // Debug log
+
+        Map<String, Object> claims = Map.of("role", "USER");
+        String token = jwtTokenUtil.generateToken(claims, "username123");
+        log.info("Generated token: "+token);
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Login successful!");
