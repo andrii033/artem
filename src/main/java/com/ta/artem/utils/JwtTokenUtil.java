@@ -3,7 +3,6 @@ package com.ta.artem.utils;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import io.jsonwebtoken.security.Keys;
@@ -32,13 +31,7 @@ public class JwtTokenUtil {
     @PostConstruct
     public void init() {
         // Decode the secret and generate the key
-        try {
-            this.SECRET_KEY = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
-            log.info("SECRET_KEY successfully initialized.");
-        } catch (IllegalArgumentException e) {
-            log.error("Failed to initialize SECRET_KEY. Check if 'jwt.secret' is properly configured.", e);
-            throw e;
-        }
+        this.SECRET_KEY = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
     /**
