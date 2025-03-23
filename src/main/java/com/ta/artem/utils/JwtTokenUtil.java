@@ -1,7 +1,8 @@
 package com.ta.artem.utils;
 
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,6 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 
-@Slf4j
 @Component
 public class JwtTokenUtil {
 
@@ -32,6 +32,7 @@ public class JwtTokenUtil {
     public void init() {
         // Decode the secret and generate the key
         this.SECRET_KEY = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+        //System.out.println("version "+org.springframework.core.SpringVersion.getVersion());
     }
 
     /**
@@ -54,5 +55,40 @@ public class JwtTokenUtil {
                 .compact(); // Build the token
 
     }
+
+    // Validate token
+    public boolean isTokenValid(String token) {
+        try {
+            // Parse the token with the secret key
+            Claims claims = Jwts.parser()
+                    .setSigningKey(SECRET_KEY)
+                    .build()
+                    .parseClaimsJws(token) // This will throw exceptions if the token is invalid
+                    .getBody();
+
+            // Ensure the token is not expired
+            return !claims.getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            System.out.println("Token expired: " + e.getMessage());
+        } catch (MalformedJwtException | SignatureException e) {
+            System.out.println("Token is invalid: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error while validating token: " + e.getMessage());
+        }
+        return false;
+    }
+
+    // Extract username from token
+    public String getUsernameFromToken(String token) {
+        JwtParser parser = Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .build();
+
+        Claims claims = parser.parseClaimsJws(token).getBody();
+        return claims.getSubject(); // Get the 'sub' claim (subject)
+    }
+
+
+
 }
 

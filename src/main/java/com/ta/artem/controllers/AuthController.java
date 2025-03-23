@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,20 +22,18 @@ import java.util.Map;
 @RequestMapping
 public class AuthController {
 
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    private final JwtTokenUtil jwtTokenUtil;
+
+    public AuthController(JwtTokenUtil jwtTokenUtil) {
+        this.jwtTokenUtil = jwtTokenUtil;
+    }
 
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        Map<String, Object> claims = Map.of("role", "ROLE_ADMIN");
+        String token = jwtTokenUtil.generateToken(claims, loginRequest.username);
 
-        Map<String, Object> claims = Map.of("role", "USER");
-        String token = jwtTokenUtil.generateToken(claims, "username123");
-        log.info("Generated token: "+token);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Login successful!");
-//        response.put("token", token);
-        return response;
+        return ResponseEntity.ok(Map.of("token", token));
     }
 
 
