@@ -13,7 +13,12 @@ import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
+import java.util.List;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
+
+@Slf4j
 @Component
 public class JwtTokenUtil {
 
@@ -58,6 +63,7 @@ public class JwtTokenUtil {
 
     // Validate token
     public boolean isTokenValid(String token) {
+        log.info("isTokenValid: " + token );
         try {
             // Parse the token with the secret key
             Claims claims = Jwts.parser()
@@ -80,15 +86,35 @@ public class JwtTokenUtil {
 
     // Extract username from token
     public String getUsernameFromToken(String token) {
+        log.info("getUsernameFromToken: " + token );
+
         JwtParser parser = Jwts.parser()
-                .setSigningKey(SECRET_KEY)
+                .setSigningKey(SECRET_KEY) // Sign the parser with the secret key
                 .build();
 
-        Claims claims = parser.parseClaimsJws(token).getBody();
-        return claims.getSubject(); // Get the 'sub' claim (subject)
+        Claims claims = parser.parseClaimsJws(token).getBody(); // Parse the token claims
+        return claims.getSubject(); // Return the 'sub' (subject), which is the username
     }
 
 
+    /**
+     * Extracts roles from the given JWT token and converts them to GrantedAuthority.
+     *
+     * @param token The JWT token from which to extract roles.
+     * @return A list of GrantedAuthority representing the roles.
+     */
+    public List<GrantedAuthority> getRolesFromToken(String token) {
+        log.info("getRolesFromToken: " + token);
 
+        JwtParser parser = Jwts.parser()
+                .setSigningKey(SECRET_KEY) // Sign the parser with the secret key
+                .build();
+
+        Claims claims = parser.parseClaimsJws(token).getBody(); // Parse the token claims
+
+        // Extract roles (assuming roles are stored as a claim named "role")
+        String role = claims.get("role", String.class);
+        return List.of(new SimpleGrantedAuthority(role)); // Convert to GrantedAuthority
+    }
 }
 

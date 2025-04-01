@@ -1,5 +1,6 @@
 package com.ta.artem.config;
 
+import com.ta.artem.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,11 +28,10 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                // Disable CORS
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfiguration = new CorsConfiguration();
                     corsConfiguration.setAllowedOriginPatterns(List.of("*"));
@@ -40,16 +40,20 @@ public class SecurityConfig {
                     corsConfiguration.setAllowCredentials(true);
                     return corsConfiguration;
                 }))
-                // Configure access to endpoints
                 .authorizeHttpRequests(request -> request
-                        // Permit all for specific paths
-                        .requestMatchers("/auth/**","/login","/create").permitAll()
-                        // Require ADMIN role for specific paths
-                        .requestMatchers("/endpoint", "/admin/**","/admin").hasRole("ADMIN")
+                        .requestMatchers("/auth/**", "/login", "/create").permitAll()
+                        .requestMatchers("/endpoint", "/admin/**", "/admin").hasRole("ADMIN")
                         .anyRequest().authenticated())
-                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
-                ;
+                // Use the JwtAuthenticationFilter bean provided by Spring
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS));
+
         return http.build();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtTokenUtil jwtTokenUtil) {
+        return new JwtAuthenticationFilter(jwtTokenUtil);
     }
 
     @Bean
