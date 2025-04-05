@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class UserService implements UserDetailsService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -20,6 +20,10 @@ public class UserService implements UserDetailsService {
 
     public List<User>getAllUsers(){
         return userRepository.findAll();
+    }
+
+    public void createUser(User user){
+        userRepository.save(user);
     }
 
     @Override
