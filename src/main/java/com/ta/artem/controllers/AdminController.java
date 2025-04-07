@@ -33,13 +33,18 @@ public class AdminController {
 
     @PostMapping(value = "/create")
     public String createUser(@RequestBody CreateUserDTO createUserDTO) {
-        User user = new User();
-        user.setUsername(createUserDTO.getUsername());
-        user.setRole(Role.valueOf(createUserDTO.getRole()));
-        user.setPassword(createUserDTO.getPassword());
-        user.setEmail(createUserDTO.getEmail());
 
-        userService.createUser(user);
-        return "User created successfully";
+        if (userService.findeUserByUsername(createUserDTO.getUsername()) != null) {
+            return "User already exists";
+        } else {
+            User user = new User();
+            user.setUsername(createUserDTO.getUsername());
+            user.setRole(Role.valueOf(createUserDTO.getRole()));
+            user.setPassword(createUserDTO.getPassword());
+            user.setEmail(createUserDTO.getEmail());
+
+            userService.createUser(user);
+            return "User created successfully";
+        }
     }
 }
