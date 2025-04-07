@@ -1,5 +1,5 @@
 package com.ta.artem.model;
 
 public enum Role {
-    ROLE_USER, ROLE_ADMIN
+    ROLE_USER, ROLE_ADMIN , ROLE_PURCHASE, ROLE_WAREHOUSE, ROLE_QC, ROLE_TECHNOLOGIST, ROLE_MANAGER
 }

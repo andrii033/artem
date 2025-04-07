@@ -6,6 +6,7 @@ import com.ta.artem.model.Role;
 import com.ta.artem.model.User;
 import com.ta.artem.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,9 +18,11 @@ import java.util.stream.Collectors;
 public class AdminController {
 
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    public AdminController(UserService userService) {
+    public AdminController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping(value = "/users")
@@ -40,7 +43,7 @@ public class AdminController {
             User user = new User();
             user.setUsername(createUserDTO.getUsername());
             user.setRole(Role.valueOf(createUserDTO.getRole()));
-            user.setPassword(createUserDTO.getPassword());
+            user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
             user.setEmail(createUserDTO.getEmail());
 
             userService.createUser(user);
