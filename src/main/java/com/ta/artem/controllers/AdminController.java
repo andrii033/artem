@@ -47,4 +47,10 @@ public class AdminController {
             return "User created successfully";
         }
     }
+
+    @DeleteMapping(value = "/delete")
+    public String deleteUser(@RequestParam Long id) {
+        userService.deleteUser(id);
+        return "User deleted successfully";
+    }
 }
