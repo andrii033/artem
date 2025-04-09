@@ -1,0 +1,38 @@
+@token = eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9BRE1JTiIsInN1YiI6ImFkbWluIiwiaWF0IjoxNzQ0MDUwNzczLCJleHAiOjE3NDQwNTQzNzN9.MXUeE7eL77NwO2HuhVz_PBWKZYgXM1qJvwOhKEK6ttA
+
+### створює адміку
+GET http://localhost:8080/create
+
+###
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+
+### отримати всіх юзерів
+GET http://localhost:8080/admin/users
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+POST http://localhost:8080/admin/create
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "username": "user",
+  "password": "user",
+  "email": "user@user",
+  "role": "ROLE_PURCHASE"
+}
+
+
+###
+DELETE http://localhost:8080/admin/delete?
+    id=2
+Content-Type: application/json
+Authorization: Bearer {{token}}
