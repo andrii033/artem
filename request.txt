@@ -1,8 +1,5 @@
 @token = eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9BRE1JTiIsInN1YiI6ImFkbWluIiwiaWF0IjoxNzQ0MDUwNzczLCJleHAiOjE3NDQwNTQzNzN9.MXUeE7eL77NwO2HuhVz_PBWKZYgXM1qJvwOhKEK6ttA
 
-### створює адміку
-GET http://localhost:8080/create
-
 ###
 POST http://localhost:8080/login
 Content-Type: application/json
