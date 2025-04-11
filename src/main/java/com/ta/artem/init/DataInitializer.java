@@ -33,5 +33,13 @@ public class DataInitializer {
         } else {
             log.info("ℹ️ Админ уже существует: {}", adminUsername);
         }
+
+        User manager = new User();
+        manager.setUsername("manager");
+        manager.setPassword(passwordEncoder.encode("manager"));
+        manager.setEmail("manager@example.com");
+        manager.setRole(Role.ROLE_MANAGER);
+        userRepository.save(manager);
+
     }
 }

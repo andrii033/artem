@@ -36,9 +36,9 @@ public class SecurityConfig {
                     return corsConfiguration;
                 }))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/**", "/login", "/create").permitAll()
+                        .requestMatchers("/login").permitAll()
                         .requestMatchers("/admin/**", "/admin").hasRole("ADMIN")
-                        .requestMatchers("/purchases/**").hasAnyRole("ADMIN", "PURCHASE")
+                        .requestMatchers("/manager/**","manager/hello").hasAnyRole("ADMIN", "MANAGER")
                         .anyRequest().authenticated())
                 // Use the JwtAuthenticationFilter bean provided by Spring
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -56,5 +56,6 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
 }
